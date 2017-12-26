@@ -1,0 +1,49 @@
+<?php
+/*
+    Access to the DB
+  
+    Developer: Oded Cnaan
+    Dec 2017
+*/
+class Adamamed_DB {
+
+   /**
+     * Query MySQL DB for its version
+     * @return string|false
+     */
+    public function getMySqlVersion() {
+        global $wpdb;
+        $rows = $wpdb->get_results('select version() as mysqlversion');
+        if (!empty($rows)) {
+             return $rows[0]->mysqlversion;
+        }
+        return false;
+    }
+  
+  /**
+    * Gets an array of relevant values for stats out of the Registration Details form
+    * @return array
+    */
+    public function getRegistrationDetails($fields_to_add_user = null) {
+      global $wpdb;
+      $table = 'wp_db7_forms';
+      $detailsFormId = '3872';
+      $rows = $wpdb->get_results('SELECT * FROM '. $table. ' WHERE form_post_id='.$detailsFormId);
+      $data = array();
+      foreach ($rows as $row) {
+        $form_data  = unserialize( $row->form_value );
+        unset($form_data['cfdb7_status']);
+        unset($form_data['mc4wp_checkbox']);  
+        if ($fields_to_add_user != null) {
+          $id = "<span class='stats-id'>". $form_data['your-name']. " [" . $form_data['your-email'] . "] - </span>";
+          foreach ($fields_to_add_user as $field) {
+            if ($form_data[$field] != "")
+              $form_data[$field] = $id . $form_data[$field];
+          }
+        }
+        array_push($data, $form_data);
+      }
+      return $data;
+    }  
+
+}

@@ -1,0 +1,24 @@
+.stats-name {
+    font-size: 12pt;
+    font-weight: bold;
+    padding-left: 20px;
+}
+.stats-value {
+    font-size: 12pt;
+    padding-right: 20px;
+    padding-left: 20px;
+    color: blue;
+}
+.stats-percent {
+    font-size: 12pt;
+    color: brown;
+}
+.stats-text {
+    font-size: 10pt;
+    font-weight: bold;
+}
+.stats-id {
+    font-size: 10pt;
+    font-weight: bold;
+    color: #00134E;    
+}
