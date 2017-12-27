@@ -46,4 +46,15 @@ class Adamamed_DB {
       return $data;
     }  
 
+    /**
+     * Gets the number of details forms submitted
+     */
+    public function getNumberOfDetailsForms() {
+      global $wpdb;
+      $table = 'wp_db7_forms';
+      $detailsFormId = '3872';
+      $wpdb->query('SELECT form_post_id FROM '. $table. ' WHERE form_post_id='.$detailsFormId);       
+      return $wpdb->num_rows;
+    }
+
 }

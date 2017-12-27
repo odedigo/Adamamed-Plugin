@@ -166,6 +166,28 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
                          array(&$this, 'adamamed_statsHelpPage'));*/
     }
 
+    /**
+     * Add a widget to the dashboard.
+     *
+     * This function is hooked into the 'wp_dashboard_setup' action below.
+     */
+    public function addAdminDashboardWidget() {        
+	    wp_add_dashboard_widget(
+                 'adamamed_widget',         // Widget slug.
+                 'אדמה מד',         // Title.
+                 array(&$this,'drawDashboardWidget') // Display function.
+        );	
+    }
+
+    /**
+     * Create the function to output the contents of our Dashboard Widget.
+     */
+    public function drawDashboardWidget() {
+        $db = new Adamamed_DB();
+        $count = $db->getNumberOfDetailsForms();
+        echo "נמצאו ".$count." טפסי הרשמה עם פרטים";
+    }        
+
     protected function addSettingsSubMenuPageToPluginsMenu() {
         $this->requireExtraPluginFiles();
         $displayName = $this->getPluginDisplayName();

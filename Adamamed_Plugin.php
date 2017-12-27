@@ -85,6 +85,9 @@ class Adamamed_Plugin extends Adamamed_LifeCycle {
         // http://plugin.michael-simpson.com/?page_id=47
         add_action('admin_menu', array(&$this, 'addSettingsSubMenuPage'));
 
+        // Add options administration dashboard widget
+        add_action( 'wp_dashboard_setup',  array(&$this, 'addAdminDashboardWidget'));
+
         // Example adding a script & style just for the options administration page
         // http://plugin.michael-simpson.com/?page_id=47
         //        if (strpos($_SERVER['REQUEST_URI'], $this->getSettingsSlug()) !== false) {
