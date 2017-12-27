@@ -57,4 +57,18 @@ class Adamamed_DB {
       return $wpdb->num_rows;
     }
 
+    public function getHelpers() {
+      global $wpdb;
+      $table = 'wp_db7_forms';
+      $detailsFormId = '1302';
+      $rows = $wpdb->get_results('SELECT * FROM '. $table. ' WHERE form_post_id='.$detailsFormId);
+      $data = array();
+      foreach ($rows as $row) {
+        $form_data  = unserialize( $row->form_value );
+        unset($form_data['cfdb7_status']);
+        unset($form_data['mc4wp_checkbox']);  
+        array_push($data, $form_data);
+      }
+      return $data;
+    }  
 }

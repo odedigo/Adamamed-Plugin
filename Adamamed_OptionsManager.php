@@ -19,7 +19,8 @@
     If not, see http://www.gnu.org/licenses/gpl-3.0.html
 */
 include_once('Adamamed_Admin_Stats.php');
-  
+include_once('Adamamed_Helpers_Stats.php');
+
 class Adamamed_OptionsManager {
 
     public function getOptionNamePrefix() {
@@ -395,6 +396,17 @@ class Adamamed_OptionsManager {
         }
 
         echo "<h2>צוות עזר</h2>";
+        $export = false;
+        if (isset($_GET['export_stats']))
+            $export = true;   
+
+        $stats = new Adamamed_HelpersPage();
+        $contents = $stats->drawStats($this, $export);
+        
+        if ($export == true) {
+          downloadFile($contents,"helpers_stats.doc");          
+          exit;
+        }
     }
 
     /**
