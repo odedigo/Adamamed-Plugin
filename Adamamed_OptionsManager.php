@@ -386,6 +386,17 @@ class Adamamed_OptionsManager {
         }
     }
 
+        /**
+     * Helpers page
+     */
+    public function adamamed_statsHelperPage() {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
+        }
+
+        echo "<h2>צוות עזר</h2>";
+    }
+
     /**
      * Helper-function outputs the correct form element (input tag, select tag) for the given item
      * @param  $aOptionKey string name of the option (un-prefixed)

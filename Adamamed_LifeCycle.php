@@ -120,7 +120,7 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
      * Override with an empty implementation if you don't want a configuration page
      * @return void
      */
-    public function addSettingsSubMenuPage() {
+    public function addAdminMenus() {
         //$this->addSettingsSubMenuPageToPluginsMenu();
         //$this->addSettingsSubMenuPageToSettingsMenu();
         $this->addSettingsSubMenuPageToMainMenu();
@@ -144,7 +144,7 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
         $this->requireExtraPluginFiles();
         $displayName = $this->getPluginDisplayName();
         $subMenuRegStats = 'טופס הרשמה';
-        //$subMenuHelpStats = 'צוות עזר';
+        $subMenuHelpStats = 'צוות עזר';
         add_menu_page($displayName,
                       $displayName,
                       'administrator',
@@ -152,18 +152,18 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
                       array(&$this, 'adamamed_mainPage'),
                       null,
                       4);        
-      add_submenu_page(  $this->getSettingsSlug(),
+        add_submenu_page(  $this->getSettingsSlug(),
                          $subMenuRegStats,
                          $subMenuRegStats,
                          'administrator',
-                         $this->getSettingsSlug().'1',
+                         "RegStats",
                          array(&$this, 'adamamed_statsPage'));
-      /*add_submenu_page(  $this->getSettingsSlug(),
+        add_submenu_page(  $this->getSettingsSlug(),
                          $subMenuHelpStats,
                          $subMenuHelpStats,
                          'administrator',
-                         $this->getSettingsSlug().'1',
-                         array(&$this, 'adamamed_statsHelpPage'));*/
+                         "HelpersStats",
+                         array(&$this, 'adamamed_statsHelperPage'));
     }
 
     /**
