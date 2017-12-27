@@ -72,13 +72,9 @@ class Adamamed_StatsPage {
         foreach ($openStats as $key => $value) {
             if ($key == 'SIZE')
                 continue;
-            $total = 0;
-            foreach ($value as $inkey => $invalue) {
-                $total += $invalue;
-            }
             $out_str .= "<tr><td>".$key."</td>";
             $out_str .= "<td>".$this->form_desc[$key]."</td>";
-            $out_str .= "<td><table>";
+            $out_str .= "<td><table class='ad-table'>";
             foreach ($value as $inkey => $invalue) {
                 if ($invalue == "")
                     continue;
@@ -164,14 +160,12 @@ class Adamamed_StatsPage {
           }
           array_push($aggregate, $this_key);
         }
-        // Count the number of occurences of each value in each key
         $i = 0;
         $stats = array();
         foreach ($aggregate as $key_array) {
             $the_key = $keys[$i++];
             if (!in_array($the_key,$this->form_details_open_fields)) 
                 continue;
-            //$key_values = array_count_values($key_array);
             $stats[$the_key] = $key_array;
         }
         return $stats;

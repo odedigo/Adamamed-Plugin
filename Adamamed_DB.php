@@ -35,7 +35,7 @@ class Adamamed_DB {
         unset($form_data['cfdb7_status']);
         unset($form_data['mc4wp_checkbox']);  
         if ($fields_to_add_user != null) {
-          $id = "<span class='stats-id'>". $form_data['your-name']. " [" . $form_data['your-email'] . "] - </span>";
+          $id = "<span class='stats-value'>". $form_data['your-name']." - </span>";
           foreach ($fields_to_add_user as $field) {
             if ($form_data[$field] != "")
               $form_data[$field] = $id . $form_data[$field];

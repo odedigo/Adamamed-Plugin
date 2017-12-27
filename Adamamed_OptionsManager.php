@@ -354,7 +354,7 @@ class Adamamed_OptionsManager {
      * main Page
      */
     public function adamamed_mainPage() {
-        if (!current_user_can('manage_options')) {
+        /*if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
         }
 
@@ -363,7 +363,8 @@ class Adamamed_OptionsManager {
             <h2>Dashboard</h2>
             <p>דף ראשי של רפואה מפרי האדמה</p>
         </div>
-    <?php    
+    <?php    */
+        $this->adamamed_statsPage();
     }
 
     /**
