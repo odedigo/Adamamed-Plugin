@@ -57,6 +57,8 @@ class Adamamed_DB {
       return $wpdb->num_rows;
     }
 
+    /******************************* HELPER FORM ***********************/
+
     public function getHelpers() {
       global $wpdb;
       $table = 'wp_db7_forms';
@@ -71,4 +73,17 @@ class Adamamed_DB {
       }
       return $data;
     }  
+
+        /**
+     * Gets the number of details forms submitted
+     */
+    public function getNumberOfHelpersForms() {
+      global $wpdb;
+      $table = 'wp_db7_forms';
+      $detailsFormId = '1302';
+      $wpdb->query('SELECT form_post_id FROM '. $table. ' WHERE form_post_id='.$detailsFormId);       
+      return $wpdb->num_rows;
+    }
+
+
 }

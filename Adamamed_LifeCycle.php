@@ -149,14 +149,14 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
                       $displayName,
                       'administrator',
                       $this->getSettingsSlug(),
-                      array(&$this, 'adamamed_mainPage'),
+                      null,//array(&$this, 'adamamed_mainPage'),
                       null,
                       4);        
         add_submenu_page(  $this->getSettingsSlug(),
                          $subMenuRegStats,
                          $subMenuRegStats,
                          'administrator',
-                         "RegStats",
+                         $this->getSettingsSlug(),
                          array(&$this, 'adamamed_statsPage'));
         add_submenu_page(  $this->getSettingsSlug(),
                          $subMenuHelpStats,
@@ -174,7 +174,7 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
     public function addAdminDashboardWidget() {        
 	    wp_add_dashboard_widget(
                  'adamamed_widget',         // Widget slug.
-                 'אדמה מד',         // Title.
+                 'רפואה מפרי האדמה',         // Title.
                  array(&$this,'drawDashboardWidget') // Display function.
         );	
     }
@@ -184,8 +184,10 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
      */
     public function drawDashboardWidget() {
         $db = new Adamamed_DB();
-        $count = $db->getNumberOfDetailsForms();
-        echo "נמצאו ".$count." טפסי הרשמה עם פרטים";
+        $countDetails = $db->getNumberOfDetailsForms();
+        $countHelpers = $db->getNumberOfHelpersForms();
+        echo "נמצאו "."<span class='stats-value'>".$countDetails."</span>"." טפסי הרשמה עם פרטים<br>";
+        echo "ו "."<span class='stats-value'>".$countHelpers."</span>"." טפסי הרשמה לצוות עזר";
     }        
 
     protected function addSettingsSubMenuPageToPluginsMenu() {
