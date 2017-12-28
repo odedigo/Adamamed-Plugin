@@ -20,6 +20,7 @@
 */
 include_once('Adamamed_Admin_Stats.php');
 include_once('Adamamed_Helpers_Stats.php');
+include_once('Adamamed_ToolsDebug.php');
 
 class Adamamed_OptionsManager {
 
@@ -354,16 +355,6 @@ class Adamamed_OptionsManager {
      * main Page
      */
     public function adamamed_mainPage() {
-        /*if (!current_user_can('manage_options')) {
-            wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
-        }
-
-    ?>
-          <div class="wrap">
-            <h2>Dashboard</h2>
-            <p>דף ראשי של רפואה מפרי האדמה</p>
-        </div>
-    <?php    */
         $this->adamamed_statsPage();
     }
 
@@ -409,6 +400,15 @@ class Adamamed_OptionsManager {
           exit;
         }
     }
+
+    /*public function adamamed_debugMode() {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
+        }
+
+        $tools = new Adamamed_ToolsDebugPage();
+        $tools->doPage();
+    }*/
 
     /**
      * Helper-function outputs the correct form element (input tag, select tag) for the given item

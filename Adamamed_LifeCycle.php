@@ -124,6 +124,7 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
         //$this->addSettingsSubMenuPageToPluginsMenu();
         //$this->addSettingsSubMenuPageToSettingsMenu();
         $this->addSettingsSubMenuPageToMainMenu();
+        //$this->addToolsMenu();
     }
 
 
@@ -138,6 +139,11 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
      */
     protected function getSettingsSlug() {
         return get_class($this) . 'Settings';
+    }
+
+    protected function addToolsMenu() {
+        /*$pageTitle = "Debug Mode";
+        add_management_page($pageTitle,$pageTitle , 'administrator', 'debug_modifier', array(&$this, 'adamamed_debugMode') );*/
     }
 
     protected function addSettingsSubMenuPageToMainMenu() {
@@ -177,7 +183,14 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
                  'רפואה מפרי האדמה',         // Title.
                  array(&$this,'drawDashboardWidget') // Display function.
         );	
-    }
+	    wp_add_dashboard_widget(
+            'debug_mod_widget',         // Widget slug.
+            'Debug Mode',         // Title.
+            array(&$this,'drawDebugModeDashboardWidget'),
+            array(&$this,'drawDebugModeDashboardWidget_handle') // Display function.
+        //add_action('wp_dashboard_setup', 'drawDebugModeDashboardWidget_handle');
+   );	
+}
 
     /**
      * Create the function to output the contents of our Dashboard Widget.
@@ -189,6 +202,20 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
         echo "נמצאו "."<span class='stats-value'>".$countDetails."</span>"." טפסי הרשמה עם פרטים<br>";
         echo "ו "."<span class='stats-value'>".$countHelpers."</span>"." טפסי הרשמה לצוות עזר";
     }        
+
+    public function drawDebugModeDashboardWidget() {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
+        }
+
+        $tools = new Adamamed_ToolsDebugPage();
+        $tools->doPage();
+    }
+
+    public function drawDebugModeDashboardWidget_handle() {
+        $tools = new Adamamed_ToolsDebugPage();
+        $tools->doPage();
+    }
 
     protected function addSettingsSubMenuPageToPluginsMenu() {
         $this->requireExtraPluginFiles();

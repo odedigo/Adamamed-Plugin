@@ -139,3 +139,16 @@ function downloadFile($data, $fileName) {
     $str = "</div></body></html>";
     return $str;
   }
+
+  function debugModeCallback() {
+    /*if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
+    }*/
+
+    echo "<p>I AM HERE".admin_url( )."</p>";
+//    wp_redirect( admin_url( ) );
+  }
+
+  function modifyDebugMode($turnon = true) {
+
+  }

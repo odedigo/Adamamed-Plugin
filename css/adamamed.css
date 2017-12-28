@@ -25,3 +25,9 @@
 .ad-table td {
     border-bottom: 1px solid gray;
 }
+.ad-error {
+    color: red;
+}
+.ad-notice {
+    color: rgb(19, 80, 46);
+}
