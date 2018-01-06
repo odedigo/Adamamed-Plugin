@@ -21,6 +21,7 @@
 include_once('Adamamed_Admin_Stats.php');
 include_once('Adamamed_Helpers_Stats.php');
 include_once('Adamamed_ToolsDebug.php');
+include_once('Adamamed_Mailist_Page.php');
 
 class Adamamed_OptionsManager {
 
@@ -379,7 +380,7 @@ class Adamamed_OptionsManager {
         }
     }
 
-        /**
+    /**
      * Helpers page
      */
     public function adamamed_statsHelperPage() {
@@ -387,7 +388,6 @@ class Adamamed_OptionsManager {
             wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
         }
 
-        echo "<h2>צוות עזר</h2>";
         $export = false;
         if (isset($_GET['export_stats']))
             $export = true;   
@@ -400,6 +400,28 @@ class Adamamed_OptionsManager {
           exit;
         }
     }
+
+    /**
+     * Mailist page
+     */    
+    public function adamamed_statsMailistPage() {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
+        }
+
+        $export = false;
+        if (isset($_GET['export_stats']))
+            $export = true;   
+
+        $stats = new Adamamed_Mailist_Page();
+        $contents = $stats->drawStats($this, $export);
+        
+        if ($export == true) {
+          downloadFile($contents,"Maillist_stats.doc");          
+          exit;
+        }
+    }
+
 
     /*public function adamamed_debugMode() {
         if (!current_user_can('manage_options')) {

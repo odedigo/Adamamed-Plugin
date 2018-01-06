@@ -28,7 +28,7 @@ class Adamamed_DB {
       global $wpdb;
       $table = 'wp_db7_forms';
       $detailsFormId = '3872';
-      $rows = $wpdb->get_results('SELECT * FROM '. $table. ' WHERE form_post_id='.$detailsFormId);
+      $rows = $wpdb->get_results('SELECT * FROM '. $table. ' WHERE form_post_id='.$detailsFormId.' ORDER BY form_date ASC');
       $data = array();
       foreach ($rows as $row) {
         $form_data  = unserialize( $row->form_value );

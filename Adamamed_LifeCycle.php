@@ -151,6 +151,7 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
         $displayName = $this->getPluginDisplayName();
         $subMenuRegStats = 'טופס הרשמה';
         $subMenuHelpStats = 'צוות עזר';
+        $subMenuMailList = "ריכוז מיילים";
         add_menu_page($displayName,
                       $displayName,
                       'administrator',
@@ -170,6 +171,12 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
                          'administrator',
                          "HelpersStats",
                          array(&$this, 'adamamed_statsHelperPage'));
+        add_submenu_page(  $this->getSettingsSlug(),
+                         $subMenuMailList,
+                         $subMenuMailList,
+                         'administrator',
+                         "AdMailList",
+                         array(&$this, 'adamamed_statsMailistPage'));
     }
 
     /**
