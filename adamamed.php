@@ -114,6 +114,8 @@ function downloadFile($data, $fileName) {
     header("Content-Disposition: attachment; filename=\"$fileName\"");
     header('Content-Type: application/octet-stream');
     //header('Content-Type: text/html');
+    //header("Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    //header("Content-Type: application/vnd.ms-excel");
     header("Content-Transfer-Encoding: binary"); 
     header("Pragma: no-cache");
     header("Content-Length: " . $fsize);

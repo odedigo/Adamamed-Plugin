@@ -38,7 +38,7 @@ class Adamamed_HelpersPage {
         $date = date('H:i d-m-Y');        
         $out_str = "<div class='wrap'><h2>סטטיסטיקה של עוזרים</h2><p>התפלגות תשובות העוזרים&nbsp&nbsp($date)</p>";        
         if (!$asString)
-            $out_str .= "<p><button type='button' onclick='javascript:exportAsDoc(\"export_stats=1\");'>ייצוא לקובץ Word</button></p>";
+            $out_str .= "<p><button type='button' onclick='javascript:exportAsDoc(\"export_stats=1\");'>ייצוא לקובץ</button></p>";
         $db = new Adamamed_DB();
         $stats = $this->getHelpersStats($db);
         if (!isset($stats) || sizeof($stats) == 0) {
