@@ -30,6 +30,7 @@
 */
 
 $Adamamed_minimalRequiredPhpVersion = '5.0';
+include_once('Adamamed_MailChimp.php');
 
 /**
  * Check the PHP version and give a useful error message if the user's version is less than the required version
@@ -100,6 +101,8 @@ function Adamamed_showStockQuantity($atts) {
 }
 add_shortcode( 'showStockQuantityTag', 'Adamamed_showStockQuantity' );
 
+/* Download */
+
 function downloadFile($data, $fileName, $exportType) {
     if ($exportType == '1')
         $fileName .= ".doc";
@@ -146,15 +149,9 @@ function downloadFile($data, $fileName, $exportType) {
     return $str;
   }
 
-  function debugModeCallback() {
-    /*if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
-    }*/
-
-    echo "<p>I AM HERE".admin_url( )."</p>";
-//    wp_redirect( admin_url( ) );
+  /* Contact Form 7 Integration  */
+  function cf7_beforeFormSent($form_tag) {
+    $mp = new Adamamed_MailChimp();
+    $mp->beforeFormSent($form_tag);
   }
-
-  function modifyDebugMode($turnon = true) {
-
-  }
+  add_action( 'wpcf7_before_send_mail', 'cf7_beforeFormSent');
