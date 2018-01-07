@@ -49,7 +49,7 @@ class Adamamed_Mailist_Page {
             $out_str .= "<tr'><td>". ($index+1). "</td>" .
             "<td>".$names[$index]."</td>" .
             "<td>".$emails[$index]."</td>" .
-            "<td>".$phones[$index]."</td>" .
+            "<td>".$this->fixPhoneNumber($phones[$index])."</td>" .
             "</tr>";
         }
 
@@ -60,6 +60,24 @@ class Adamamed_Mailist_Page {
             return $out_str;
         echo $out_str;
         return "";
+    }
+
+    protected function fixPhoneNumber($number) {
+        $chars = str_split($number);
+        $normalized = $number;
+        if ($chars[0] == '0' && $chars[1] == '5') { // mobile
+            if ($chars[3] != '-') {
+                // add - char
+                $normalized = implode("",array_merge(array_slice($chars, 0, 3), array('-'), array_slice($chars, 3)));
+            }
+        }
+        else if ($chars[0] == '0' && $chars[1] != '0') { // landline
+            if ($chars[2] != '-') {
+                // add - char
+                $normalized = implode("",array_merge(array_slice($chars, 0, 2), array('-'), array_slice($chars, 2)));
+            }            
+        }
+        return $normalized;
     }
 
     /**
