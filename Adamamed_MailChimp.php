@@ -3,9 +3,11 @@
 class Adamamed_MailChimp {
 
     protected $mailChimp_form_id = 3872;
-    protected $fields = array('email'=>'your-email','name'=>'your-name');
+    protected $fields = array('email'=>'your-email','name'=>'your-name', 'accept'=>'Accept');
+    protected $accept_word = 'מאשרים';
 
     public function beforeFormSent($form_tag) {
+        return;
         $form = WPCF7_Submission::get_instance();
         if ( $form ) {
             $black_list   = array('_wpcf7', '_wpcf7_version', '_wpcf7_locale', '_wpcf7_unit_tag',
@@ -30,18 +32,25 @@ class Adamamed_MailChimp {
                 }
             }
 
-            $d = print_r($form_data,true);
+$dd = print_r($data,true);
+$this->addMessageToBody($form_tag, $dd);
+return;
             $name = $form_data[$this->fields['name']];
             $email = $form_data[$this->fields['email']];
+            $accept = $form_data[$this->fields['accept']];
+            $msg = '';
+            if ($accept !== $this->accept_word) {
+                $msg = 'Member did not accept chechbox ['.$accept.']';
+            }
 
             $all_names = $this->getFirstFamilityName($name);
             if ($all_names == null)
-                return;
+                $msg = 'Missing names';
 
-            $msg = 'Not submitted';
-            if(!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL) === false){
+            if($msg == '' && !empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL) === false){
                 $msg = $this->sumbitToMailChimp($all_names['fname'],$all_names['lname'],$email);
             }
+            $this->addMessageToBody($form_tag, $msg);
         }
     }
 
@@ -131,7 +140,7 @@ class Adamamed_MailChimp {
     protected function addMessageToBody($form_tag, $msg) {
         $mail = $form_tag->prop( 'mail' ); // returns array 
         // add content to email body
-        $mail['body'] = 'Message: '.$msg. "\r\n".$mail['body'];
+        $mail['body'] .= '\r\nMailChimp Auto Subsciprion: '.$msg;
         // set mail property with changed value(s)
         $form_tag->set_properties( array( 'mail' => $mail ) );
     }

@@ -155,3 +155,18 @@ function downloadFile($data, $fileName, $exportType) {
     $mp->beforeFormSent($form_tag);
   }
   add_action( 'wpcf7_before_send_mail', 'cf7_beforeFormSent');
+
+  /* WooCommerce Plugin */
+
+/**
+ * Custom PayPal button text
+ */
+add_filter( 'gettext', 'ld_custom_paypal_button_text', 20, 3 );
+function ld_custom_paypal_button_text( $translated_text, $text, $domain ) {
+	switch ( $translated_text ) {
+		case 'המשך לפייפאל' :
+			$translated_text = "לביצוע תשלום";
+			break;
+	}
+	return $translated_text;
+}
