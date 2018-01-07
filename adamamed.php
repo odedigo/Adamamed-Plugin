@@ -100,7 +100,11 @@ function Adamamed_showStockQuantity($atts) {
 }
 add_shortcode( 'showStockQuantityTag', 'Adamamed_showStockQuantity' );
 
-function downloadFile($data, $fileName) {
+function downloadFile($data, $fileName, $exportType) {
+    if ($exportType == '1')
+        $fileName .= ".doc";
+    else
+        $fileName .= ".xls";
     $prefix = getDownloadPrefix();
     $suffix = getDownloadSuffix();
     $data = $prefix . $data . $suffix;

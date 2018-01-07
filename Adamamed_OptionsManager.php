@@ -375,7 +375,7 @@ class Adamamed_OptionsManager {
         $contents = $stats->drawStats($this, $export);
         
         if ($export == true) {
-          downloadFile($contents,"registration_stats.xls");          
+          downloadFile($contents,"registration_stats",$_GET['export_stats']);          
           exit;
         }
     }
@@ -396,7 +396,7 @@ class Adamamed_OptionsManager {
         $contents = $stats->drawStats($this, $export);
         
         if ($export == true) {
-          downloadFile($contents,"helpers_stats.xls");          
+          downloadFile($contents,"helpers_stats",$_GET['export_stats']);          
           exit;
         }
     }
@@ -417,7 +417,7 @@ class Adamamed_OptionsManager {
         $contents = $stats->drawStats($this, $export);
         
         if ($export == true) {
-          downloadFile($contents,"Maillist_stats.xls");          
+          downloadFile($contents,"Maillist_stats",$_GET['export_stats']);          
           exit;
         }
     }
