@@ -1,13 +1,15 @@
 <?php
 
+include_once("cm.php");
+
 class Adamamed_MailChimp {
 
     protected $mailChimp_form_id = 3872;
-    protected $fields = array('email'=>'your-email','name'=>'your-name', 'accept'=>'Accept');
+    protected $fields = array('email'=>'your-email','name'=>'your-name', 'accept'=>'accept');
     protected $accept_word = 'מאשרים';
 
     public function beforeFormSent($form_tag) {
-        return;
+        
         $form = WPCF7_Submission::get_instance();
         if ( $form ) {
             $black_list   = array('_wpcf7', '_wpcf7_version', '_wpcf7_locale', '_wpcf7_unit_tag',
@@ -32,12 +34,9 @@ class Adamamed_MailChimp {
                 }
             }
 
-$dd = print_r($data,true);
-$this->addMessageToBody($form_tag, $dd);
-return;
             $name = $form_data[$this->fields['name']];
             $email = $form_data[$this->fields['email']];
-            $accept = $form_data[$this->fields['accept']];
+            $accept = $form_data[$this->fields['accept']][0];
             $msg = '';
             if ($accept !== $this->accept_word) {
                 $msg = 'Member did not accept chechbox ['.$accept.']';
@@ -56,7 +55,7 @@ return;
 
     protected function sumbitToMailChimp($first_name, $last_name, $email) {
         // MailChimp API credentials
-        $apiKey = '4f0e7517c6913ecd164fc0567a08d83c-us9';
+        $apiKey = CM_KEY;
         $listID = '96fda3d4c8';
 
         // MailChimp API URL
@@ -96,7 +95,7 @@ return;
                     $msg = 'You are already subscribed.';
                     break;
                 default:
-                    $msg = 'Some problem occurred, please try again.';
+                    $msg = 'Some problem occurred, please try again. ('.$httpCode.')';
                     break;
             }
             $msg = '<p style="color: #EA4335">'.$msg.'</p>';
@@ -140,7 +139,7 @@ return;
     protected function addMessageToBody($form_tag, $msg) {
         $mail = $form_tag->prop( 'mail' ); // returns array 
         // add content to email body
-        $mail['body'] .= '\r\nMailChimp Auto Subsciprion: '.$msg;
+        $mail['body'] .= '<br />MailChimp Auto Subsciprion: '.$msg. "<br />";
         // set mail property with changed value(s)
         $form_tag->set_properties( array( 'mail' => $mail ) );
     }
