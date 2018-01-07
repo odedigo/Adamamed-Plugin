@@ -31,3 +31,9 @@
 .ad-notice {
     color: rgb(19, 80, 46);
 }
+#adminmenu #toplevel_page_Adamamed_PluginSettings div.wp-menu-image::before {
+    content: "\f527";
+}
+#adminmenu toplevel_page_Adamamed_PluginSettings div.wp-menu-image {
+    background: none !important;
+}
