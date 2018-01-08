@@ -37,3 +37,6 @@
 #adminmenu toplevel_page_Adamamed_PluginSettings div.wp-menu-image {
     background: none !important;
 }
+.ad-duplicate {
+    color: red;
+}

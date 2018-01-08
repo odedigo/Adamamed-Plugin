@@ -414,7 +414,7 @@ class Adamamed_OptionsManager {
             $export = true;   
 
         $stats = new Adamamed_Mailist_Page();
-        $contents = $stats->drawStats($this, $export);
+        $contents = $stats->drawMailist($this, $export);
         
         if ($export == true) {
           downloadFile($contents,"Maillist_stats",$_GET['export_stats']);          

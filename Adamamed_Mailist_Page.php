@@ -2,9 +2,13 @@
 
 include_once('Adamamed_DB.php');
 
+/**
+ * Admin Panel Feature
+ * Presents a list of all users that have filled in the Details form
+ */
 class Adamamed_Mailist_Page {
 
-    /* Form related arrays */
+    /* Form related attributes */
     protected $form_details_email = "your-email";
     protected $form_details_name = "your-name";
     protected $form_details_phone ='phone-num';
@@ -14,14 +18,14 @@ class Adamamed_Mailist_Page {
     
     /**
      * drawStats
-     * Generate statistics on the registration form
+     * Draws the mailing list
      * 
      * @plugin - the plugin instance
      * @asString - if true, the result HTML will be returned as a string (used for exporting)
      *             if false, the result will be writted to the output stream (displayed in
      *             admin area)
      */                                
-    public function drawStats($plugin, $asString = false) {
+    public function drawMailist($plugin, $asString = false) {
         $date = date('H:i d-m-Y');        
         $out_str = "<div class='wrap'><h2>ריכוז מיילים מטופס הרשמה</h2><p>&nbsp&nbsp($date)</p>";        
         if (!$asString) {
@@ -29,7 +33,7 @@ class Adamamed_Mailist_Page {
             $out_str .= "<button type='button' onclick='javascript:exportAsDoc(\"export_stats=2\");'>ייצוא לקובץ Excel</button></p>";
         }
         $db = new Adamamed_DB();
-        $stats = $this->getHelpersStats($db);
+        $stats = $this->getMembersDetails($db);
         if (!isset($stats) || sizeof($stats) == 0) {
             $out_str .= "<div>לא נמצאו טפסים</div></div>";
             if ($asString)
@@ -44,13 +48,21 @@ class Adamamed_Mailist_Page {
         $phones = array_values($stats[$this->form_details_phone]);        
 
         $out_str .= "<table cellspacing='1' cellpadding='2' border='1' ><tbody>";
-        $out_str .= "<tr><td>#</td><td>שם</td><td>מייל</td><td>מספר טלפון</td></tr>";
+        $out_str .= "<tr><td>#</td><td>שם</td><td>מייל</td><td>מספר טלפון</td><td>הערות</td></tr>";
+        $unique_email = array();
         for ($index = 0; $index < $size ; $index++) {
             $out_str .= "<tr'><td>". ($index+1). "</td>" .
-            "<td>".$names[$index]."</td>" .
-            "<td>".$emails[$index]."</td>" .
-            "<td>".$this->fixPhoneNumber($phones[$index])."</td>" .
-            "</tr>";
+            "<td>".$names[$index]."</td>" . 
+            "<td>".$emails[$index]."</td>";
+            $out_str .="<td>".$this->fixPhoneNumber($phones[$index])."</td>";
+            if (in_array($emails[$index],$unique_email))
+                $out_str .= "<td class='ad-duplicate'>כפילות</td>";
+            else {
+                array_push($unique_email, $emails[$index]);
+                $out_str .= "<td></td>";
+            }            
+
+            $out_str .="</tr>";
         }
 
         $out_str .= "</tbody></table>";
@@ -62,6 +74,10 @@ class Adamamed_Mailist_Page {
         return "";
     }
 
+    /**
+     * Reformats the phone number to a readable format with 
+     * a dash at the right place
+     */
     protected function fixPhoneNumber($number) {
         $chars = str_split($number);
         $normalized = $number;
@@ -81,10 +97,9 @@ class Adamamed_Mailist_Page {
     }
 
     /**
-     * Gets an array where each entry is an array for a single form key with the number
-     * of times the answer appeared 
+     * Gets an array of users from the registration form
      */
-    public function getHelpersStats($db) {
+    public function getMembersDetails($db) {
         $all_forms = $db->getRegistrationDetails();
         if (sizeof($all_forms) == 0)
           return;
@@ -105,4 +120,4 @@ class Adamamed_Mailist_Page {
         return $aggregate;
       }
 }
-  ?>
+?>
