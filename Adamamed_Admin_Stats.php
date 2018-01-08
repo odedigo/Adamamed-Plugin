@@ -76,7 +76,7 @@ class Adamamed_StatsPage {
                 continue;
             $out_str .= "<tr><td>".$key."</td>";
             $out_str .= "<td>".$this->form_desc[$key]."</td>";
-            $out_str .= "<td><table class='ad-table'>";
+            $out_str .= "<td><table class='ad1-table'>";
             foreach ($value as $inkey => $invalue) {
                 if ($invalue == "")
                     continue;

@@ -43,6 +43,7 @@ class Adamamed_HelpersPage {
         }
         $db = new Adamamed_DB();
         $stats = $this->getHelpersStats($db);
+
         if (!isset($stats) || sizeof($stats) == 0) {
             $out_str .= "<div>לא נמצאו טפסים</div></div>";
             if ($asString)
@@ -56,9 +57,9 @@ class Adamamed_HelpersPage {
 
         $out_str .= "<table cellspacing='1' cellpadding='2' border='1' ><tbody>";
         foreach ($values as $key => $value) {
-            $out_str .= "<tr'><td>". $key. "</td>" .
+            $out_str .= "<tr><td>". $key. "</td>" .
             "<td>".$this->form_desc[$key]."</td>" .
-            "<td><table class='ad-table'>";
+            "<td><table class='ad1-table'>";
             $index = 0;
             foreach ($value as $item) {
                 $userid = $names[$index];
