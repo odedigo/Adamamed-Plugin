@@ -1,5 +1,24 @@
 <?php
-
+/**
+ * OptionsManager [Options general functions, dir, prefix, capabilities, specific menus ]
+ *      /\
+ * InstallIndicator [ Install status, version, general plugin data ]
+ *      /\
+ * LifeCycle [installation, activation, admin menus]
+ *      /\
+ * Plugin [manages options, adds scripts and css, plugin related, override methods]
+ * 
+ * 
+ * ShortcodeLoader [registration]
+ *      /\
+ * ShortcodeScriptLoader [registration]
+ * 
+ * other files
+ * -----------
+ * init, adamamed [functions]
+ * DB [DB access]
+ * 
+ */
 
 include_once('Adamamed_LifeCycle.php');
 
