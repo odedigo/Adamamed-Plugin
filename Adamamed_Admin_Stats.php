@@ -86,7 +86,7 @@ class Adamamed_StatsPage {
             }
             $out_str .= "</table></td></tr>";
         }
-        $out_str .= "</tbody></table></div>";
+        $out_str .= "</tbody></table>";
 
         $out_str .= "<h2>הסכמה לדיוור</h2><p></p>";
         $out_str .= "<table cellspacing='1' cellpadding='2' border='1'><tbody>";
@@ -101,7 +101,7 @@ class Adamamed_StatsPage {
             $out_str .= $item . "<br>";
         }
         $out_str .= "</td></tr>";
-        $out_str .= "</tbody></table></div>";
+        $out_str .= "</tbody></table>";
         $out_str .= "</div>";
         if ($asString)
             return $out_str;
