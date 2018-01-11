@@ -133,6 +133,7 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
         $subMenuRegStats = 'טופס הרשמה';
         $subMenuHelpStats = 'צוות עזר';
         $subMenuMailList = "ריכוז מיילים";
+        $subMenuGContacts = "אנשי קשר גוגל";
         add_menu_page($displayName,
                       $displayName,
                       'administrator',
@@ -158,6 +159,12 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
                          'administrator',
                          "AdMailList",
                          array(&$this, 'adamamed_statsMailistPage'));
+        /*add_submenu_page(  $this->getSettingsSlug(),
+                         $subMenuGContacts,
+                         $subMenuGContacts,
+                         'administrator',
+                         "AdContacts",
+                         array(&$this, 'adamamed_googleContactsPage'));*/
     }
 
     /**

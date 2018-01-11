@@ -137,6 +137,6 @@ class Adamamed_Plugin extends Adamamed_LifeCycle {
 
     public function addStylesJs() {        
         wp_enqueue_style('adamamed-css', plugin_dir_url(__FILE__).'css/adamamed.css');        
-        wp_enqueue_script( 'adamamed-js', plugin_dir_url(__FILE__).'js/adamamed.js');
+        wp_enqueue_script( 'adamamed-js', plugin_dir_url(__FILE__).'js/adamamed.js');        
     }
 }

@@ -4,6 +4,7 @@ include_once('Adamamed_Admin_Stats.php');
 include_once('Adamamed_Helpers_Stats.php');
 include_once('Adamamed_ToolsDebug.php');
 include_once('Adamamed_Mailist_Page.php');
+//include_once('Adamamed_GoogleContacts.php');
 
 class Adamamed_OptionsManager {
 
@@ -404,6 +405,26 @@ class Adamamed_OptionsManager {
         }
     }
 
+    /**
+     * Mailist page
+     */    
+    public function adamamed_googleContactsPage() {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
+        }
+
+        $export = false;
+        if (isset($_GET['export_stats']))
+            $export = true;   
+
+        $gc = new Adamamed_Google_Contacts();
+        $contacts = $gc->getGoogleContacts($this, $export);
+        
+        if ($export == true) {
+          downloadFile($contacts,"Google_Contacts",$_GET['export_stats']);          
+          exit;
+        }
+    }
 
     /*public function adamamed_debugMode() {
         if (!current_user_can('manage_options')) {
