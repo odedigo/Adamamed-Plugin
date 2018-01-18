@@ -7,6 +7,8 @@ class Adamamed_MailChimp {
     protected $mailChimp_form_id = 3872;
     protected $fields = array('email'=>'your-email','name'=>'your-name', 'accept'=>'accept');
     protected $accept_word = 'מאשרים';
+    protected $eventList = '554e88cf48';
+    protected $distList = '96fda3d4c8';
 
     public function beforeFormSent($form_tag) {
         
@@ -47,16 +49,17 @@ class Adamamed_MailChimp {
                 $msg = 'Missing names';
 
             if($msg == '' && !empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL) === false){
-                $msg = $this->sumbitToMailChimp($all_names['fname'],$all_names['lname'],$email);
+                $msg = $this->sumbitToMailChimp($all_names['fname'],$all_names['lname'],$email, $this->distList);
             }
+            //
+            $this->sumbitToMailChimp($all_names['fname'],$all_names['lname'],$email,$this->eventList);
             $this->addMessageToBody($form_tag, $msg);
         }
     }
 
-    protected function sumbitToMailChimp($first_name, $last_name, $email) {
+    protected function sumbitToMailChimp($first_name, $last_name, $email, $listID) {
         // MailChimp API credentials
-        $apiKey = CM_KEY;
-        $listID = '96fda3d4c8';
+        $apiKey = CM_KEY;        
 
         // MailChimp API URL
         $memberID = md5(strtolower($email));

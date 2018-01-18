@@ -32,6 +32,10 @@ class Adamamed_Mailist_Page {
             $out_str .= "<p><button type='button' onclick='javascript:exportAsDoc(\"export_stats=1\");'>ייצוא לקובץ Word</button>&nbsp;&nbsp;";
             $out_str .= "<button type='button' onclick='javascript:exportAsDoc(\"export_stats=2\");'>ייצוא לקובץ Excel</button></p>";
         }
+
+        // Get all the paid orders from WooCommerce
+        $order_emails = $this->getWoocommerceOrders();     
+
         $db = new Adamamed_DB();
         $stats = $this->getMembersDetails($db);
         if (!isset($stats) || sizeof($stats) == 0) {
@@ -48,7 +52,7 @@ class Adamamed_Mailist_Page {
         $phones = array_values($stats[$this->form_details_phone]);        
 
         $out_str .= "<table cellspacing='1' cellpadding='2' border='1' ><tbody>";
-        $out_str .= "<tr><td>#</td><td>שם</td><td>מייל</td><td>מספר טלפון</td><td>הערות</td></tr>";
+        $out_str .= "<tr><td>#</td><td>שם</td><td>מייל</td><td>מספר טלפון</td><td>הערות</td><td>שולם?</td></tr>";
         $unique_email = array();
         for ($index = 0; $index < $size ; $index++) {
             $out_str .= "<tr'><td>". ($index+1). "</td>" .
@@ -60,7 +64,11 @@ class Adamamed_Mailist_Page {
             else {
                 array_push($unique_email, $emails[$index]);
                 $out_str .= "<td></td>";
-            }            
+            }        
+            $out_str .= "<td>";
+            if (in_array($emails[$index],$order_emails)) 
+                $out_str .= "שולם";
+            $out_str .= "</td>";
 
             $out_str .="</tr>";
         }
@@ -72,6 +80,22 @@ class Adamamed_Mailist_Page {
             return $out_str;
         echo $out_str;
         return "";
+    }
+
+    protected function getWoocommerceOrders() {
+        $args = array(
+            'status' => 'processing',
+            'limit' => -1,
+        );
+        $results = wc_get_orders($args);
+        $numOrders = sizeof($results);
+
+        $result = array();
+        for ($index = 0 ; $index < $numOrders; $index++) {
+            $order = new WC_Order($results[$index]);
+            array_push($result, $order->get_billing_email());
+        }
+        return $result;
     }
 
     /**
