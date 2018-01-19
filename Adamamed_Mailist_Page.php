@@ -34,7 +34,7 @@ class Adamamed_Mailist_Page {
         }
 
         // Get all the paid orders from WooCommerce
-        $order_emails = $this->getWoocommerceOrders();     
+        $order_details = $this->getWoocommerceOrders();     
 
         $db = new Adamamed_DB();
         $stats = $this->getMembersDetails($db);
@@ -46,13 +46,14 @@ class Adamamed_Mailist_Page {
             return "";
         }
         $size = $stats['SIZE'];
-        $out_str .= "<h4>סך הכל ".$size." טפסים</h4>";
+        $out_str .= "<h4>סך הכל ".$size." טפסים מהם ".sizeof($order_details['email'])." שולמו, ו ".$order_details['total']." כרטיסים נקנו</h4>";
+
         $names = array_values($stats[$this->form_details_name]);        
         $emails = array_values($stats[$this->form_details_email]);        
         $phones = array_values($stats[$this->form_details_phone]);        
 
         $out_str .= "<table cellspacing='1' cellpadding='2' border='1' ><tbody>";
-        $out_str .= "<tr><td>#</td><td>שם</td><td>מייל</td><td>מספר טלפון</td><td>הערות</td><td>שולם?</td></tr>";
+        $out_str .= "<tr><td>#</td><td>שם</td><td>מייל</td><td>מספר טלפון</td><td>הערות</td><td>תשלום</td><td>כמות</td><td>מוצר</td></tr>";
         $unique_email = array();
         for ($index = 0; $index < $size ; $index++) {
             $out_str .= "<tr'><td>". ($index+1). "</td>" .
@@ -66,8 +67,17 @@ class Adamamed_Mailist_Page {
                 $out_str .= "<td></td>";
             }        
             $out_str .= "<td>";
-            if (in_array($emails[$index],$order_emails)) 
+            $order_index = $this->findInArray($order_details['email'], $emails[$index]);
+            if ($order_index != -1)
                 $out_str .= "שולם";
+            $out_str .= "</td>";
+            $out_str .= "<td>";
+            if ($order_index != -1)
+                $out_str .= $order_details['quantity'][$order_index];
+            $out_str .= "</td>";
+            $out_str .= "<td>";
+            if ($order_index != -1)
+                $out_str .= $order_details['product'][$order_index];
             $out_str .= "</td>";
 
             $out_str .="</tr>";
@@ -82,6 +92,17 @@ class Adamamed_Mailist_Page {
         return "";
     }
 
+    protected function findInArray($hay, $needle) {
+        for($index = 0; $index < sizeof($hay); $index++) {
+            if ($hay[$index] == $needle)
+                return $index;
+        }
+        return -1;
+    }
+
+    /**
+     * get the orders from WooCommerce (only paid ones)
+     */
     protected function getWoocommerceOrders() {
         $args = array(
             'status' => 'processing',
@@ -90,12 +111,23 @@ class Adamamed_Mailist_Page {
         $results = wc_get_orders($args);
         $numOrders = sizeof($results);
 
-        $result = array();
+        $resultEmails = array();
+        $resultQuantity = array();
+        $resultProduct = array();
+        $total = 0;
         for ($index = 0 ; $index < $numOrders; $index++) {
             $order = new WC_Order($results[$index]);
-            array_push($result, $order->get_billing_email());
-        }
-        return $result;
+            array_push($resultEmails, $order->get_billing_email());
+            $items = $order->get_items(); 
+            foreach ($items as $key => $product ) {
+                $order_item = new WC_Order_Item_Product($key);                    
+                $quantity =  $order_item->get_quantity();
+                $total += $quantity;
+                array_push($resultQuantity, $quantity);
+                array_push($resultProduct, $product->get_name());
+            }
+        }        
+        return array('email'=>$resultEmails, 'quantity'=>$resultQuantity, 'product'=>$resultProduct, 'total'=>$total);
     }
 
     /**
