@@ -33,6 +33,8 @@ class Adamamed_Mailist_Page {
             $out_str .= "<button type='button' onclick='javascript:exportAsDoc(\"export_stats=2\");'>ייצוא לקובץ Excel</button></p>";
         }
 
+        $admin_url = admin_url();
+
         // Get all the paid orders from WooCommerce
         $order_details = $this->getWoocommerceOrders();     
 
@@ -53,7 +55,7 @@ class Adamamed_Mailist_Page {
         $phones = array_values($stats[$this->form_details_phone]);        
 
         $out_str .= "<table cellspacing='1' cellpadding='2' border='1' ><tbody>";
-        $out_str .= "<tr><td>#</td><td>שם</td><td>מייל</td><td>מספר טלפון</td><td>הערות</td><td>תשלום</td><td>כמות</td><td>מוצר</td></tr>";
+        $out_str .= "<tr><th>#</th><th>שם</th><th>מייל</th><th>מספר טלפון</th><th>הערות</th><th>תשלום</th><th>כמות</th><th>מוצר</th><th>מס הזמנה</th><th>תאריך תשלום</th></tr>";
         $unique_email = array();
         for ($index = 0; $index < $size ; $index++) {
             $out_str .= "<tr'><td>". ($index+1). "</td>" .
@@ -66,20 +68,28 @@ class Adamamed_Mailist_Page {
                 array_push($unique_email, $emails[$index]);
                 $out_str .= "<td></td>";
             }        
-            $out_str .= "<td>";
+            
             $order_index = $this->findInArray($order_details['email'], $emails[$index]);
-            if ($order_index != -1)
+            if ($order_index != -1) {
+                $out_str .= "<td>";
                 $out_str .= "שולם";
-            $out_str .= "</td>";
-            $out_str .= "<td>";
-            if ($order_index != -1)
+                $out_str .= "</td><td>";
                 $out_str .= $order_details['quantity'][$order_index];
-            $out_str .= "</td>";
-            $out_str .= "<td>";
-            if ($order_index != -1)
+                $out_str .= "</td><td>";
                 $out_str .= $order_details['product'][$order_index];
-            $out_str .= "</td>";
-
+                $out_str .= "</td><td>";
+                if ($asString == false)
+                    $out_str .= "<a href='".$admin_url."/post.php?post=".$order_details['order_id'][$order_index]."&action=edit'>";
+                $out_str .= $order_details['order_id'][$order_index];
+                if ($asString == false)
+                    $out_str .= "</a>";
+                $out_str .= "</td><td>";
+                $out_str .= $order_details['date_paid'][$order_index];
+                $out_str .= "</td>";
+            }
+            else {
+                $out_str .= "<td></td><td></td><td></td><td></td><td></td>";
+            }
             $out_str .="</tr>";
         }
 
@@ -114,10 +124,15 @@ class Adamamed_Mailist_Page {
         $resultEmails = array();
         $resultQuantity = array();
         $resultProduct = array();
+        $resultOrderId = array();
+        $resultPaid = array();
         $total = 0;
         for ($index = 0 ; $index < $numOrders; $index++) {
             $order = new WC_Order($results[$index]);
+            array_push($resultOrderId, $order->get_id());
             array_push($resultEmails, $order->get_billing_email());
+            $paid = $order->get_date_paid() ? gmdate( 'd/m/Y בשעה H:i', $order->get_date_paid()->getOffsetTimestamp() ) : '';
+            array_push($resultPaid, $paid);
             $items = $order->get_items(); 
             foreach ($items as $key => $product ) {
                 $order_item = new WC_Order_Item_Product($key);                    
@@ -127,7 +142,8 @@ class Adamamed_Mailist_Page {
                 array_push($resultProduct, $product->get_name());
             }
         }        
-        return array('email'=>$resultEmails, 'quantity'=>$resultQuantity, 'product'=>$resultProduct, 'total'=>$total);
+        return array('email'=>$resultEmails, 'quantity'=>$resultQuantity, 'product'=>$resultProduct, 'order_id'=> $resultOrderId, 
+                    'date_paid'=>$resultPaid, 'total'=>$total);
     }
 
     /**
