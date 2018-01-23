@@ -85,5 +85,52 @@ class Adamamed_DB {
       return $wpdb->num_rows;
     }
 
+     /******************************* MANUAL RESULTS ***********************/
+
+    /**
+     * Get all manual orders
+     */  
+    public function getManualOrders() {
+      global $wpdb;
+      $table = 'wp_manual_orders';
+      $rows = $wpdb->get_results("SELECT * FROM ".$table." ORDER BY 'date'");
+      return $rows;
+    }
+
+    public function deleteManualOrder($id) {
+      global $wpdb;
+      $table = 'wp_manual_orders';
+
+      $wpdb->delete($table, array('order_id' => $id));
+    }
+
+    public function insertManualOrder($data) {
+      global $wpdb;
+      $table = 'wp_manual_orders';
+
+      $wpdb->insert($table, array( 
+        'email' => $data['email'],
+        'quantity' => $data['quantity'],
+        'product' => $data['product'],
+        'date' => $data['date'],
+        'reference' => $data['reference']
+      ));
+      return $wpdb->insert_id;
+    }
+
+    public function updateManualOrder($id, $data) {
+      global $wpdb;
+      $table = 'wp_manual_orders';
+
+      $wpdb->update($table,array( 
+        'email' => $data['email'],
+        'quantity' => $data['quantity'],
+        'product' => $data['product'],
+        'date' => $data['date'],
+        'reference' => $data['reference']
+        ),
+        array('order_id' => $id)
+      );
+    }
 
 }
