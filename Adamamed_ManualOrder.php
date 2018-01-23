@@ -27,30 +27,31 @@ class Adamamed_Manual_Order {
                 <th>כמות</th>
                 <th>מוצר</th>
                 <th>אסמכתא</th>
-                <th>תאריך</th>
+                <th>תאריך בפורמט 23-01-2018</th>
                 <th>פעולות</th>
             </tr>
         
         <?php foreach ($manualOrders as $order) : ?>
         <form method="POST">
         <input type="hidden" name="manual_orders" value="manual_orders">
+        <input type="hidden" name="oid" value="<?php echo $order->order_id;?>">
         <tr>
             <!-- ID -->
             <td><?php echo $order->order_id;?></td>
             <!-- email -->
-            <td><input type="text" size="20" name='email_<?php echo $order->order_id;?>' value="<?php echo $order->email;?>"></td>
+            <td><input type="text" size="20" name='email' value="<?php echo $order->email;?>"></td>
             <!-- quantity -->
-            <td><input type="text" size="4" name='quantity_<?php echo $order->order_id;?>' value="<?php echo $order->quantity;?>"></td>
+            <td><input type="text" size="4" name='quantity' value="<?php echo $order->quantity;?>"></td>
             <!-- product -->
-            <td><input type="text" name='product_<?php echo $order->order_id;?>' value="<?php echo $order->product;?>"></td>
+            <td><input type="text" name='product' value="<?php echo $order->product;?>"></td>
             <!-- ref -->
-            <td><input type="text" size="20" name='reference_<?php echo $order->order_id;?>' value="<?php echo $order->reference;?>"></td>
+            <td><input type="text" size="20" name='reference' value="<?php echo $order->reference;?>"></td>
             <!-- date -->
-            <td><input type="text" size="20" name='date_<?php echo $order->order_id;?>' value="<?php echo $order->date;?>"></td>
+            <td><input type="text" size="20" name='date' value="<?php echo $this->reverseDate($order->date,true);?>"></td>
             <!-- Action -->
             <td>
-            <button name='del_<?php echo $order->order_id;?>' id='delete'>מחיקה</button>&nbsp;&nbsp;
-            <button name='upd_<?php echo $order->order_id;?>'>עדכון</button>
+            <button name='action_delete'>מחיקה</button>&nbsp;&nbsp;
+            <button name='action_update'>עדכון</button>
             </td>
         </tr>
         </form>
@@ -65,18 +66,18 @@ class Adamamed_Manual_Order {
             <!-- ID -->
             <td></td>
             <!-- email -->
-            <td><input type="text" size="20" name='email_new' ></td>
+            <td><input type="text" size="20" name='email' ></td>
             <!-- quantity -->
-            <td><input type="text" size="4" name='quantity_new' ></td>
+            <td><input type="text" size="4" name='quantity' ></td>
             <!-- product -->
-            <td><input type="text" name='product_new' ></td>
+            <td><input type="text" name='product' ></td>
             <!-- ref -->
-            <td><input type="text" size="20" name='reference_new' ></td>
+            <td><input type="text" size="20" name='reference' ></td>
             <!-- date -->
-            <td><input type="text" size="20" name='date_new' ></td>
+            <td><input type="text" size="20" name='date' ></td>
             <!-- Action -->
             <td>
-            <button name='new' id='new'>הוספה</button>&nbsp;&nbsp;
+            <button name='action_new'>הוספה</button>&nbsp;&nbsp;
             </td>
         </tr>
         </form>
@@ -99,35 +100,35 @@ class Adamamed_Manual_Order {
         }
         $data = array();
         $id = -1;
+        if (isset($_POST['oid']))
+            $id = $_POST['oid'];
         $action = '';
         foreach ($_POST as $key => $value) {
             //echo '<p>'.$key.' - '.$value.'</p>';
-            $items = explode('_', $key);
-            if (sizeof($items) == 2 && $items[0] == 'quantity') {
-                $id = $items[1];
-            }
-            if ($items[0] == 'del')
+            if ($key == 'action_delete')
                 $action = 'delete';
-            else if ($items[0] == 'upd')
+            else if ($key == 'action_update')
                 $action = 'update';
-            else if ($items[0] == 'new')
+            else if ($key == 'action_new')
                 $action = 'new';      
                
-            if (sizeof($items) == 2)
-                $data[$items[0]] = $value;
+            if ($key == 'date')    
+                $value = $this->reverseDate($value,false);
+            $data[$key] = $value;
         }
 
-        echo "<p style='text-align:right;direction:ltr'>";
-        echo "Action: $action       id: $id<br>";
-        print_r($data);
-        echo "</p>";
-        if ($action == 'delete') {
-            if ($this->validateData($data))
-                $db->deleteManualOrder($id);
+        if ($action == '') {
+            $this->msg("Error parsing form");
+            return;
         }
-        else if ($action == 'update') {
+
+        $db = new Adamamed_DB();
+        if ($action == 'delete' && $id >= 0) {
+            $db->deleteManualOrder($id);
+        }
+        else if ($action == 'update' && $id >= 0) {
             if ($this->validateData($data))
-                db->updateManualOrder($id, $data);
+                $db->updateManualOrder($id, $data);
         }
         else if ($action == 'new') {
             if ($this->validateData($data))
@@ -137,9 +138,56 @@ class Adamamed_Manual_Order {
     }
 
     protected function validateData($data) {
-        $email = $data['email'];
-        return false;
+        $ok = true;
+        if (!isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $ok = false;
+            $this->msg("כתובת אימייל לא חוקית");
+        }
+        if (!isset($data['quantity']) || !is_numeric($data['quantity']) || $data['quantity']<1) {
+            $ok = false;
+            $this->msg("כמות לא חוקית");
+        }
+        if (!isset($data['product']) || $data['product'] == '') {
+            $ok = false;
+            $this->msg("מוצר לא חוקי");
+        }
+        if (!isset($data['reference']) || $data['reference'] == '') {
+            $data['reference'] = '0';
+        }
+        if (!isset($data['date']) || $data['date'] == '' || !$this->isDate($data['date'])) {
+            $ok = false;
+            $this->msg("תאריך לא חוקי".$data['date']);
+        }
+        return $ok;
     }
 
+    protected function reverseDate($date, $fromDB) {
+        $parts = explode('-',$date);
+        if ($fromDB)
+            $d = $parts[2].'-'.$parts[1].'-'.$parts[0];
+        else
+            $d = $parts[2].'-'.$parts[1].'-'.$parts[0];
+        return $d;
+    }
+
+    protected function isDate($date) {
+        $parts = explode('-',$date);
+        if (sizeof($parts) != 3)
+            return false;
+        if (!is_numeric($parts[0]) || strlen($parts[0]) != 4)
+            return false;
+        if (!is_numeric($parts[1]) || strlen($parts[1]) != 2 || $parts[1] < 0 || $parts[1] > 12)
+            return false;
+        if (!is_numeric($parts[2]) || strlen($parts[2]) != 2 || $parts[2] < 0 || $parts[2] > 31)
+            return false;
+        return true;
+    }
+
+    protected function msg($str, $isError = true) {
+        echo "<p style='font-weight:bold;";
+        if ($isError)
+            echo "color:red;";
+        echo "'>$str</p>";
+    }
 }
 ?>

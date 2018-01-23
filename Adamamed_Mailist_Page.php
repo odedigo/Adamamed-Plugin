@@ -47,9 +47,14 @@ class Adamamed_Mailist_Page {
             echo $out_str;
             return "";
         }
-        $size = $stats['SIZE'];
-        $out_str .= "<h4>סך הכל ".$size." טפסים מהם ".sizeof($order_details['email'])." שולמו, ו ".$order_details['total']." כרטיסים נקנו</h4>";
 
+        $manualOrders = $db->getManualOrders();
+
+        $size = $stats['SIZE'];
+        $out_str .= "<h4>סך הכל ".$size." טפסים מהם ".sizeof($order_details['email'])." שולמו, ו ".$order_details['total']." כרטיסים נקנו</h4>";        
+        if (sizeof($manualOrders) > 0) {
+            $out_str .= "<h4>נמצאו ".sizeof($manualOrders)." הזמנות ידניות</h4>";
+        }
         $names = array_values($stats[$this->form_details_name]);        
         $emails = array_values($stats[$this->form_details_email]);        
         $phones = array_values($stats[$this->form_details_phone]);        
@@ -92,7 +97,23 @@ class Adamamed_Mailist_Page {
                 $out_str .= "</td>";
             }
             else {
-                $out_str .= "<td></td><td></td><td></td><td></td><td></td>";
+                $order_index = $this->findInManualOrders($manualOrders,$emails[$index]);
+                if ($order_index >= 0) {
+                    $out_str .= "<td>";
+                    $out_str .= "שולם ידנית";
+                    $out_str .= "</td><td>";
+                    $out_str .= $manualOrders[$order_index]->quantity;
+                    $table_quantity += $manualOrders[$order_index]->quantity;
+                    $out_str .= "</td><td>";
+                    $out_str .= $manualOrders[$order_index]->product;
+                    $out_str .= "</td><td>";
+                    $out_str .= $manualOrders[$order_index]->reference;
+                    $out_str .= "</td><td>";
+                    $out_str .= $manualOrders[$order_index]->date;
+                    $out_str .= "</td>";
+                    }
+                else
+                    $out_str .= "<td></td><td></td><td></td><td></td><td></td>";
             }
             $out_str .="</tr>";
         }
@@ -118,6 +139,16 @@ class Adamamed_Mailist_Page {
                 return $index;
         }
         return -1;
+    }
+
+    protected function findInManualOrders($hay, $needle) {
+        $index = 0;
+        foreach ($hay as $order) {
+            if ($order->email == $needle)
+                return $index;
+            $index++;
+        }
+        return -1;        
     }
 
     /**
