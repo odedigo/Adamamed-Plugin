@@ -11,6 +11,7 @@ class Adamamed_Manual_Order {
         echo "<h4>רשימת הזמנות ידניות במערכת</h4>";
 
         $manualOrders = $this->getManualOrders();
+
         //print_r($manualOrders);
         $form_nonce = wp_create_nonce( 'nds_add_user_meta_form_nonce' ); 
         ?>
@@ -48,10 +49,12 @@ class Adamamed_Manual_Order {
             <td><input type="text" size="20" name='reference' value="<?php echo $order->reference;?>"></td>
             <!-- date -->
             <td><input type="text" size="20" name='date' value="<?php echo $this->reverseDate($order->date,true);?>"></td>
+            <!-- comment -->
+            <td><input type="text" size="40" name='comment' value="<?php echo $order->comment;?>"></td>
             <!-- Action -->
             <td>
-            <button name='action_delete'>מחיקה</button>&nbsp;&nbsp;
-            <button name='action_update'>עדכון</button>
+            <button name='action_delete' onclick='return confirmDeleteSubmit("<?php echo $order->email;?>");'>מחיקה</button>&nbsp;&nbsp;
+            <button name='action_update' onclick='return confirmUpdateSubmit("<?php echo $order->email;?>");'>עדכון</button>
             </td>
         </tr>
         </form>
@@ -75,6 +78,8 @@ class Adamamed_Manual_Order {
             <td><input type="text" size="20" name='reference' ></td>
             <!-- date -->
             <td><input type="text" size="20" name='date' ></td>
+            <!-- date -->
+            <td><input type="text" size="40" name='comment' ></td>
             <!-- Action -->
             <td>
             <button name='action_new'>הוספה</button>&nbsp;&nbsp;

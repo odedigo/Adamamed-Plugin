@@ -99,8 +99,9 @@ class Adamamed_Mailist_Page {
             else {
                 $order_index = $this->findInManualOrders($manualOrders,$emails[$index]);
                 if ($order_index >= 0) {
-                    $out_str .= "<td>";
+                    $out_str .= "<td style='color:blue'>";
                     $out_str .= "שולם ידנית";
+                    $out_str .= "<br>".$manualOrders[$order_index]->comment;
                     $out_str .= "</td><td>";
                     $out_str .= $manualOrders[$order_index]->quantity;
                     $table_quantity += $manualOrders[$order_index]->quantity;

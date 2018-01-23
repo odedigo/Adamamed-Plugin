@@ -108,12 +108,15 @@ class Adamamed_DB {
       global $wpdb;
       $table = 'wp_manual_orders';
 
+      $data['comment'] = str_replace('\"',"",$data['comment']);
+
       $wpdb->insert($table, array( 
-        'email' => $data['email'],
-        'quantity' => $data['quantity'],
-        'product' => $data['product'],
-        'date' => $data['date'],
-        'reference' => $data['reference']
+        'email' => $wpdb-> _escape($data['email']),
+        'quantity' => $wpdb-> _escape($data['quantity']),
+        'product' => $wpdb-> _escape($data['product']),
+        'date' => $wpdb-> _escape($data['date']),
+        'reference' => $wpdb-> _escape($data['reference']),
+        'comment' => $wpdb-> _escape($data['comment'])
       ));
       return $wpdb->insert_id;
     }
@@ -122,12 +125,15 @@ class Adamamed_DB {
       global $wpdb;
       $table = 'wp_manual_orders';
 
+      $data['comment'] = str_replace('\"',"",$data['comment']);
+
       $wpdb->update($table,array( 
-        'email' => $data['email'],
-        'quantity' => $data['quantity'],
-        'product' => $data['product'],
-        'date' => $data['date'],
-        'reference' => $data['reference']
+        'email' => $wpdb-> _escape($data['email']),
+        'quantity' => $wpdb-> _escape($data['quantity']),
+        'product' => $wpdb-> _escape($data['product']),
+        'date' => $wpdb-> _escape($data['date']),
+        'reference' => $wpdb-> _escape($data['reference']),
+        'comment' => $wpdb-> _escape($data['comment'])
         ),
         array('order_id' => $id)
       );
