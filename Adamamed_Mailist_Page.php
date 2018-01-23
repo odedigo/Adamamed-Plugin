@@ -56,6 +56,7 @@ class Adamamed_Mailist_Page {
 
         $out_str .= "<table cellspacing='1' cellpadding='2' border='1' ><tbody>";
         $out_str .= "<tr><th>#</th><th>שם</th><th>מייל</th><th>מספר טלפון</th><th>הערות</th><th>תשלום</th><th>כמות</th><th>מוצר</th><th>מס הזמנה</th><th>תאריך תשלום</th></tr>";
+        $table_quantity = 0;
         $unique_email = array();
         for ($index = 0; $index < $size ; $index++) {
             $out_str .= "<tr'><td>". ($index+1). "</td>" .
@@ -70,11 +71,14 @@ class Adamamed_Mailist_Page {
             }        
             
             $order_index = $this->findInArray($order_details['email'], $emails[$index]);
+            if ($order_index == -1) 
+                $order_index = $this->findInArray($order_details['phone'], $phones[$index]);
             if ($order_index != -1) {
                 $out_str .= "<td>";
                 $out_str .= "שולם";
                 $out_str .= "</td><td>";
                 $out_str .= $order_details['quantity'][$order_index];
+                $table_quantity += $order_details['quantity'][$order_index];
                 $out_str .= "</td><td>";
                 $out_str .= $order_details['product'][$order_index];
                 $out_str .= "</td><td>";
@@ -94,6 +98,12 @@ class Adamamed_Mailist_Page {
         }
 
         $out_str .= "</tbody></table>";
+
+        // problem with the data
+        if ($table_quantity != $order_details['total']) {
+            $gap = $order_details['total'] - $table_quantity;
+            $out_str .= "<p style='color:red;font-weight:bold'>פער של ".$gap." במספר הכרטיסים</p>";
+        }
 
         $out_str .= "</div>";
         if ($asString)
@@ -122,6 +132,7 @@ class Adamamed_Mailist_Page {
         $numOrders = sizeof($results);
 
         $resultEmails = array();
+        $resultPhone = array();
         $resultQuantity = array();
         $resultProduct = array();
         $resultOrderId = array();
@@ -131,6 +142,7 @@ class Adamamed_Mailist_Page {
             $order = new WC_Order($results[$index]);
             array_push($resultOrderId, $order->get_id());
             array_push($resultEmails, $order->get_billing_email());
+            array_push($resultPhone, $this->fixPhoneNumber($order->get_billing_phone()));
             $paid = $order->get_date_paid() ? gmdate( 'd/m/Y בשעה H:i', $order->get_date_paid()->getOffsetTimestamp() ) : '';
             array_push($resultPaid, $paid);
             $items = $order->get_items(); 
@@ -143,7 +155,7 @@ class Adamamed_Mailist_Page {
             }
         }        
         return array('email'=>$resultEmails, 'quantity'=>$resultQuantity, 'product'=>$resultProduct, 'order_id'=> $resultOrderId, 
-                    'date_paid'=>$resultPaid, 'total'=>$total);
+                    'date_paid'=>$resultPaid, 'phone'=>$resultPhone, 'total'=>$total);
     }
 
     /**
