@@ -109,6 +109,7 @@ class Adamamed_DB {
       $table = 'wp_manual_orders';
 
       $data['comment'] = str_replace('\"',"",$data['comment']);
+      $data['comment'] = str_replace("\'","",$data['comment']);
 
       $wpdb->insert($table, array( 
         'email' => $wpdb-> _escape($data['email']),
@@ -126,6 +127,7 @@ class Adamamed_DB {
       $table = 'wp_manual_orders';
 
       $data['comment'] = str_replace('\"',"",$data['comment']);
+      $data['comment'] = str_replace("\'","",$data['comment']);
 
       $wpdb->update($table,array( 
         'email' => $wpdb-> _escape($data['email']),

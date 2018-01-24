@@ -61,7 +61,7 @@ class Adamamed_Manual_Order {
         <?php endforeach; ?>
 
         <tr>
-            <td colspan="7" style='text-align:center;font-weight:bold'>הוספת הזמנה ידנית חדשה</td>
+            <td colspan="8" style='text-align:center;font-weight:bold'>הוספת הזמנה ידנית חדשה</td>
         </tr>
         <form method="POST">
         <input type="hidden" name="manual_orders" value="manual_orders">
