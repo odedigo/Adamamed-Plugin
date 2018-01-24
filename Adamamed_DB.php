@@ -108,16 +108,16 @@ class Adamamed_DB {
       global $wpdb;
       $table = 'wp_manual_orders';
 
-      $data['comment'] = str_replace('\"',"",$data['comment']);
-      $data['comment'] = str_replace("\'","",$data['comment']);
+      //$data['comment'] = str_replace('\"',"",$data['comment']);
+      //$data['comment'] = str_replace("\'","",$data['comment']);
 
       $wpdb->insert($table, array( 
-        'email' => $wpdb-> _escape($data['email']),
-        'quantity' => $wpdb-> _escape($data['quantity']),
-        'product' => $wpdb-> _escape($data['product']),
-        'date' => $wpdb-> _escape($data['date']),
-        'reference' => $wpdb-> _escape($data['reference']),
-        'comment' => $wpdb-> _escape($data['comment'])
+        'email' => $this->encode($data['email']),
+        'quantity' => $this->encode($data['quantity']),
+        'product' => $this->encode($data['product']),
+        'date' => $this->encode($data['date']),
+        'reference' => $this->encode($data['reference']),
+        'comment' => $this->encode($data['comment'])
       ));
       return $wpdb->insert_id;
     }
@@ -126,19 +126,30 @@ class Adamamed_DB {
       global $wpdb;
       $table = 'wp_manual_orders';
 
-      $data['comment'] = str_replace('\"',"",$data['comment']);
-      $data['comment'] = str_replace("\'","",$data['comment']);
+      //$data['comment'] = str_replace('\"',"",$data['comment']);
+      //$data['comment'] = str_replace("\'","",$data['comment']);
 
       $wpdb->update($table,array( 
-        'email' => $wpdb-> _escape($data['email']),
-        'quantity' => $wpdb-> _escape($data['quantity']),
-        'product' => $wpdb-> _escape($data['product']),
-        'date' => $wpdb-> _escape($data['date']),
-        'reference' => $wpdb-> _escape($data['reference']),
-        'comment' => $wpdb-> _escape($data['comment'])
+        'email' => $this->encode($data['email']),
+        'quantity' => $this->encode($data['quantity']),
+        'product' => $this->encode($data['product']),
+        'date' => $this->encode($data['date']),
+        'reference' => $this->encode($data['reference']),
+        'comment' => $this->encode($data['comment'])
         ),
         array('order_id' => $id)
       );
     }
 
+
+    protected function encode($str) {
+      global $wpdb;
+      $str = htmlentities($str, ENT_QUOTES);
+      return $str;
+      //return $wpdb->_escape($str);
+    }
+
+    public function decode($str) {
+      return stripslashes($str);
+    }
 }

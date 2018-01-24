@@ -96,6 +96,9 @@ class Adamamed_Manual_Order {
     protected function getManualOrders() {
         $db = new Adamamed_DB();
         $orders = $db->getManualOrders();
+        foreach ($orders as $ord) {
+            $ord->comment = $db->decode($ord->comment);
+        }
         return $orders;
     }
 
