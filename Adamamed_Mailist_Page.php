@@ -47,8 +47,11 @@ class Adamamed_Mailist_Page {
             echo $out_str;
             return "";
         }
-
+        
         $manualOrders = $db->getManualOrders();
+        foreach ($manualOrders as $ord) {
+            $ord->comment = $db->decode($ord->comment);
+        }        
 
         $size = $stats['SIZE'];
         $out_str .= "<h4>סך הכל ".$size." טפסים מהם ".sizeof($order_details['email'])." שולמו, ו ".$order_details['total']." כרטיסים נקנו</h4>";        
@@ -108,7 +111,13 @@ class Adamamed_Mailist_Page {
                     $out_str .= "</td><td>";
                     $out_str .= $manualOrders[$order_index]->product;
                     $out_str .= "</td><td>";
-                    $out_str .= $manualOrders[$order_index]->reference;
+                    if ($asString == false && ($manualOrders[$order_index]->reference[0] == '#')) {
+                        $out_str .= "<a href='".$admin_url."/post.php?post=".substr($manualOrders[$order_index]->reference,1)."&action=edit'>";
+                        $out_str .= substr($manualOrders[$order_index]->reference,1);
+                        $out_str .= "</a>";
+                    }
+                    else
+                        $out_str .= $manualOrders[$order_index]->reference;
                     $out_str .= "</td><td>";
                     $out_str .= $manualOrders[$order_index]->date;
                     $out_str .= "</td>";
