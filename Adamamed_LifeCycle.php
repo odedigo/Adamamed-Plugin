@@ -69,6 +69,36 @@ class Adamamed_LifeCycle extends Adamamed_InstallIndicator {
      * @return void
      */
     protected function installDatabaseTables() {
+        global $wpdb;
+        $table_name = $wpdb->prefix ."manual_orders";
+        
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+                'order_id' bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                'email' varchar(255) NOT NULL,
+                'quantity' int(10) unsigned NOT NULL,
+                'product' varchar(255) NOT NULL,
+                'date' date NOT NULL,
+                'reference' varchar(255) NOT NULL,
+                'comment' varchar(255) NOT NULL,
+                PRIMARY KEY ('order_id')
+          ) CHARSET=utf8 COMMENT='manual orders not through WooCommerce' AUTO_INCREMENT=1;";
+
+        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+        dbDelta($sql);
+/*
+CREATE TABLE IF NOT EXISTS `wp_manual_orders` (
+  `order_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL,
+  `quantity` int(10) unsigned NOT NULL,
+  `product` varchar(255) NOT NULL,
+  `date` date NOT NULL,
+  `reference` varchar(255) NOT NULL,
+  `comment` varchar(255) NOT NULL,
+  PRIMARY KEY (`order_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='manual orders not through WooCommerce' AUTO_INCREMENT=6 ;
+*/
+
     }
 
     /**
