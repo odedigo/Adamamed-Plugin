@@ -35,13 +35,14 @@ class Adamamed_ArrivalList_Page {
         }        
         $out_str .= "<h4>סך הכל ".sizeof($forms)." טפסים</h4>";
         $out_str .= "<table cellspacing='1' cellpadding='2' border='1'><thead>";
-        $out_str .= "<th width='200'>שם</th><th width='200'>טלפון</th><th width='200'>ימי הגעה</th><th width='200'>לינה</th></thead><tbody>";
+        $out_str .= "<th width='200'>שם</th><th width='200'>טלפון</th><th width='200'>ימי הגעה</th><th width='200'>אדם נוסף</th><th width='200'>לינה</th></thead><tbody>";
         foreach ($forms as $person) {
 
             $out_str .= "<tr><td>".$person['your-name']."</td>";
             $out_str .= "<td>".$this->fixPhoneNumber($person['phone-num'])."</td>";
             $out_str .= "<td>".$person['days']."</td>";
-            $out_str .= "<td>".$person['kids']."</td></tr>";
+            $out_str .= "<td>".$person['kids']."</td>";
+            $out_str .= "<td>".$person['sleep']."</td></tr>";
         }
 
         $out_str .= "</tbody></table>";
