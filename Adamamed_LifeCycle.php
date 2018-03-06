@@ -165,6 +165,7 @@ CREATE TABLE IF NOT EXISTS `wp_manual_orders` (
         $subMenuMailList = "ריכוז מיילים";
         $subMenuGContacts = "אנשי קשר גוגל";
         $subMenuOrders = "הזמנות ידניות";
+        $subArrivalList = "רשימת מגיעים";
         add_menu_page($displayName,
                       $displayName,
                       'administrator',
@@ -196,6 +197,12 @@ CREATE TABLE IF NOT EXISTS `wp_manual_orders` (
                          'administrator',
                          "ManOrders",
                          array(&$this, 'adamamed_manualOrdersPage'));
+        add_submenu_page(  $this->getSettingsSlug(),
+                         $subArrivalList,
+                         $subArrivalList,
+                         'administrator',
+                         "Arrivals",
+                         array(&$this, 'adamamed_arrivalListPage'));
     }
 
     /**

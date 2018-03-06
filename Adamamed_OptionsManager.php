@@ -5,6 +5,7 @@ include_once('Adamamed_Helpers_Stats.php');
 include_once('Adamamed_ToolsDebug.php');
 include_once('Adamamed_Mailist_Page.php');
 include_once('Adamamed_ManualOrder.php');
+include_once('Adamamed_ArrivalList.php');
 //include_once('Adamamed_GoogleContacts.php');
 
 class Adamamed_OptionsManager {
@@ -402,6 +403,27 @@ class Adamamed_OptionsManager {
         
         if ($export == true) {
           downloadFile($contents,"Maillist_stats",$_GET['export_stats']);          
+          exit;
+        }
+    }
+
+    /**
+     * Arrival page
+     */    
+    public function adamamed_arrivalListPage() {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'adamamed'));
+        }
+
+        $export = false;
+        if (isset($_GET['export_stats']))
+            $export = true;   
+
+        $stats = new Adamamed_ArrivalList_Page();
+        $contents = $stats->drawList($this, $export);
+        
+        if ($export == true) {
+          downloadFile($contents,"ArrivalList",$_GET['export_stats']);          
           exit;
         }
     }
