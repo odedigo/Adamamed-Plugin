@@ -48,6 +48,8 @@ class Adamamed_Mailist_Page {
             return "";
         }
         
+        $regForms = $this->getForms($db);
+        
         $manualOrders = $db->getManualOrders();
         foreach ($manualOrders as $ord) {
             $ord->comment = $db->decode($ord->comment);
@@ -61,19 +63,25 @@ class Adamamed_Mailist_Page {
         $names = array_values($stats[$this->form_details_name]);        
         $emails = array_values($stats[$this->form_details_email]);        
         $phones = array_values($stats[$this->form_details_phone]);        
-
-        $out_str .= "<table cellspacing='1' cellpadding='2' border='1' ><tbody>";
-        $out_str .= "<tr><th>#</th><th>שם</th><th>מייל</th><th>מספר טלפון</th><th>הערות</th><th>תשלום</th><th>כמות</th><th>מוצר</th><th>מס הזמנה</th><th>תאריך תשלום</th></tr>";
+      
+        $out_str .= "<table cellspacing='1' cellpadding='2' border='1' ><thead>";
+        $out_str .= "<tr><th>#</th><th>שם</th><th>מייל</th><th>מספר טלפון</th><th>הערות</th><th>תשלום</th><th>כמות</th><th>מוצר</th><th>מס הזמנה</th><th>תאריך תשלום</th>";
+        $out_str .= "<th >ימי הגעה</th><th width='20'>אדם נוסף</th><th >לינה</th></tr></thead><tbody>";
         $table_quantity = 0;
         $unique_email = array();
+        $extraIndex = 0;
         for ($index = 0; $index < $size ; $index++) {
+
+            $regFormIndex = $this->findPersonInForm($regForms, $emails[$index]);
 
             // a customer may appear more than once if ordered different products
             $order_index_list = $this->findInArrayDup($order_details['email'], $emails[$index]);
             for ($ind = 0 ; $ind < sizeof($order_index_list); $ind++) {
+                if (sizeof($order_index_list) > 1 && $ind > 0)
+                    $extraIndex++;
                 $order_index = $order_index_list[$ind];//$this->findInArray($order_details['email'], $emails[$index]);
 
-                $out_str .= "<tr'><td>". ($index+1). "</td>" .
+                $out_str .= "<tr'><td>". ($index+$extraIndex+1). "</td>" .
                 "<td>".$names[$index]."</td>" . 
                 "<td>".$emails[$index]."</td>";
                 $out_str .="<td>".$this->fixPhoneNumber($phones[$index])."</td>";
@@ -87,7 +95,7 @@ class Adamamed_Mailist_Page {
 
                 if ($order_index == -1) 
                     $order_index = $this->findInArray($order_details['phone'], $phones[$index]);
-                if ($order_index != -1) {
+                if ($order_index != -1) { // order found in woocommerce
                     $out_str .= "<td>";
                     $out_str .= "שולם";
                     $out_str .= "</td><td>";
@@ -104,8 +112,23 @@ class Adamamed_Mailist_Page {
                     $out_str .= "</td><td>";
                     $out_str .= $order_details['date_paid'][$order_index];
                     $out_str .= "</td>";
+
+                    if ($regFormIndex != -1) {
+                        $out_str .= "<td>"; // days
+                        $out_str .= $regForms[$regFormIndex]['days'];
+                        $out_str .= "</td>";
+                        $out_str .= "<td>"; // kids
+                        $out_str .= $regForms[$regFormIndex]['kids'];
+                        $out_str .= "</td>";
+                        $out_str .= "<td>"; // sleep
+                        $out_str .= $regForms[$regFormIndex]['sleep'];
+                        $out_str .= "</td>";
+                    }
+                    else {
+                        $out_str .= "<td>לא נמצא טופס הרשמה</td><td></td><td></td>";
+                    }
                 }
-                else {
+                else { // is it a manual order?
                     $order_index = $this->findInManualOrders($manualOrders,$emails[$index]);
                     if ($order_index >= 0) {
                         $out_str .= "<td style='color:blue'>";
@@ -127,9 +150,25 @@ class Adamamed_Mailist_Page {
                         $out_str .= "</td><td>";
                         $out_str .= $manualOrders[$order_index]->date;
                         $out_str .= "</td>";
+
+                        if ($regFormIndex != -1) {
+                            $out_str .= "<td>"; // days
+                            $out_str .= $regForms[$regFormIndex]['days'];
+                            $out_str .= "</td>";
+                            $out_str .= "<td>"; // kids
+                            $out_str .= $regForms[$regFormIndex]['kids'];
+                            $out_str .= "</td>";
+                            $out_str .= "<td>"; // sleep
+                            $out_str .= $regForms[$regFormIndex]['sleep'];
+                            $out_str .= "</td>";
                         }
-                    else
-                        $out_str .= "<td><span style='color:red'>לא שולם</span></td><td></td><td></td><td></td><td></td>";
+                        else {
+                            $out_str .= "<td><span style='color:#a93203'>לא נמצא טופס הרשמה</span></td><td></td><td></td>";
+                        }
+    
+                    }
+                    else // found reg form but no payment
+                        $out_str .= "<td><span style='color:#a93203'>קיים טופס הרשמה אבל לא שולם</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
                 }
                 $out_str .="</tr>";
 
@@ -276,5 +315,19 @@ class Adamamed_Mailist_Page {
         $aggregate['SIZE'] = $size;
         return $aggregate;
       }
+
+    function getForms($db) {
+        $all_forms = $db->getRegistrationDetails();
+        return $all_forms;
+    }
+
+    function findPersonInForm($regForms, $email) {
+        $index = -1;
+        for ($ind = 0 ; $ind < sizeof($regForms) ; $ind++) {
+            if ($regForms[$ind]['your-email'] == $email)
+                return $ind;
+        }
+        return $index;
+    }
 }
 ?>
