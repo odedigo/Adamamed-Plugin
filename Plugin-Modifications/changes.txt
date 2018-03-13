@@ -1,0 +1,37 @@
+AMAMAMED PLUGIN CODE CHANGES:
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+Last changed: 13/03/2018
+By: Oded
+
+WOOCOMMERCE
+============
+/public_html/adamamed_com/wp-content/plugins/woocommerce/templates/single-product/add-to-cart/simple.php
+- added 2 buttons
+
+/public_html/adamamed_com/wp-content/plugins/woocommerce/templates/cart/proceed-to-checkout-button.php
+- URL change - display details form
+
+/public_html/adamamed_com/wp-content/plugins/woocommerce/templates/checkout/form-checkout.php
+- Remove some of the fields from the checkout form
+
+Contact Form 7 CFDB7
+====================
+/public_html/adamamed_com/wp-content/plugins/contact-form-cfdb7/inc/export-csv.php
+- UTF-8 support
+- Form name change
+
+
+
+
+
+
+
+<!-- START ODED 
+    CHANGE: 
+    DESC: 
+-->
+
+/** START ODED 
+    CHANGE: 
+    DESC: 
+*/
