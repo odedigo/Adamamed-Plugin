@@ -67,70 +67,79 @@ class Adamamed_Mailist_Page {
         $table_quantity = 0;
         $unique_email = array();
         for ($index = 0; $index < $size ; $index++) {
-            $out_str .= "<tr'><td>". ($index+1). "</td>" .
-            "<td>".$names[$index]."</td>" . 
-            "<td>".$emails[$index]."</td>";
-            $out_str .="<td>".$this->fixPhoneNumber($phones[$index])."</td>";
-            if (in_array($emails[$index],$unique_email))
-                $out_str .= "<td class='ad-duplicate'>כפילות</td>";
-            else {
-                array_push($unique_email, $emails[$index]);
-                $out_str .= "<td></td>";
-            }        
-            
-            $order_index = $this->findInArray($order_details['email'], $emails[$index]);
-            if ($order_index == -1) 
-                $order_index = $this->findInArray($order_details['phone'], $phones[$index]);
-            if ($order_index != -1) {
-                $out_str .= "<td>";
-                $out_str .= "שולם";
-                $out_str .= "</td><td>";
-                $out_str .= $order_details['quantity'][$order_index];
-                $table_quantity += $order_details['quantity'][$order_index];
-                $out_str .= "</td><td>";
-                $out_str .= $order_details['product'][$order_index];
-                $out_str .= "</td><td>";
-                if ($asString == false)
-                    $out_str .= "<a href='".$admin_url."/post.php?post=".$order_details['order_id'][$order_index]."&action=edit'>";
-                $out_str .= $order_details['order_id'][$order_index];
-                if ($asString == false)
-                    $out_str .= "</a>";
-                $out_str .= "</td><td>";
-                $out_str .= $order_details['date_paid'][$order_index];
-                $out_str .= "</td>";
-            }
-            else {
-                $order_index = $this->findInManualOrders($manualOrders,$emails[$index]);
-                if ($order_index >= 0) {
-                    $out_str .= "<td style='color:blue'>";
-                    $out_str .= "שולם ידנית";
-                    $out_str .= "<br>".$manualOrders[$order_index]->comment;
+
+            // a customer may appear more than once if ordered different products
+            $order_index_list = $this->findInArrayDup($order_details['email'], $emails[$index]);
+            for ($ind = 0 ; $ind < sizeof($order_index_list); $ind++) {
+                $order_index = $order_index_list[$ind];//$this->findInArray($order_details['email'], $emails[$index]);
+
+                $out_str .= "<tr'><td>". ($index+1). "</td>" .
+                "<td>".$names[$index]."</td>" . 
+                "<td>".$emails[$index]."</td>";
+                $out_str .="<td>".$this->fixPhoneNumber($phones[$index])."</td>";
+                if (in_array($emails[$index],$unique_email))
+                    $out_str .= "<td class='ad-duplicate'>כפילות</td>";
+                else {
+                    array_push($unique_email, $emails[$index]);
+                    $out_str .= "<td></td>";
+                }        
+                
+
+                if ($order_index == -1) 
+                    $order_index = $this->findInArray($order_details['phone'], $phones[$index]);
+                if ($order_index != -1) {
+                    $out_str .= "<td>";
+                    $out_str .= "שולם";
                     $out_str .= "</td><td>";
-                    $out_str .= $manualOrders[$order_index]->quantity;
-                    $table_quantity += $manualOrders[$order_index]->quantity;
+                    $out_str .= $order_details['quantity'][$order_index];
+                    $table_quantity += $order_details['quantity'][$order_index];
                     $out_str .= "</td><td>";
-                    $out_str .= $manualOrders[$order_index]->product;
+                    $out_str .= $order_details['product'][$order_index];
                     $out_str .= "</td><td>";
-                    if ($asString == false && ($manualOrders[$order_index]->reference[0] == '#')) {
-                        $out_str .= "<a href='".$admin_url."/post.php?post=".substr($manualOrders[$order_index]->reference,1)."&action=edit'>";
-                        $out_str .= substr($manualOrders[$order_index]->reference,1);
+                    if ($asString == false)
+                        $out_str .= "<a href='".$admin_url."/post.php?post=".$order_details['order_id'][$order_index]."&action=edit'>";
+                    $out_str .= $order_details['order_id'][$order_index];
+                    if ($asString == false)
                         $out_str .= "</a>";
-                    }
-                    else
-                        $out_str .= $manualOrders[$order_index]->reference;
                     $out_str .= "</td><td>";
-                    $out_str .= $manualOrders[$order_index]->date;
+                    $out_str .= $order_details['date_paid'][$order_index];
                     $out_str .= "</td>";
-                    }
-                else
-                    $out_str .= "<td></td><td></td><td></td><td></td><td></td>";
+                }
+                else {
+                    $order_index = $this->findInManualOrders($manualOrders,$emails[$index]);
+                    if ($order_index >= 0) {
+                        $out_str .= "<td style='color:blue'>";
+                        $out_str .= "שולם ידנית";
+                        $out_str .= "<br>".$manualOrders[$order_index]->comment;
+                        $out_str .= "</td><td>";
+                        $out_str .= $manualOrders[$order_index]->quantity;
+                        $table_quantity += $manualOrders[$order_index]->quantity;
+                        $out_str .= "</td><td>";
+                        $out_str .= $manualOrders[$order_index]->product;
+                        $out_str .= "</td><td>";
+                        if ($asString == false && ($manualOrders[$order_index]->reference != '' && $manualOrders[$order_index]->reference[0] == '#')) {
+                            $out_str .= "<a href='".$admin_url."/post.php?post=".substr($manualOrders[$order_index]->reference,1)."&action=edit'>";
+                            $out_str .= substr($manualOrders[$order_index]->reference,1);
+                            $out_str .= "</a>";
+                        }
+                        else
+                            $out_str .= $manualOrders[$order_index]->reference;
+                        $out_str .= "</td><td>";
+                        $out_str .= $manualOrders[$order_index]->date;
+                        $out_str .= "</td>";
+                        }
+                    else
+                        $out_str .= "<td><span style='color:red'>לא שולם</span></td><td></td><td></td><td></td><td></td>";
+                }
+                $out_str .="</tr>";
+
             }
-            $out_str .="</tr>";
         }
 
         $out_str .= "</tbody></table>";
 
         // problem with the data
+        $out_str .= "<h3>נמצאו ".$table_quantity." כרטיסים בטבלה "."</h3>";
         if ($table_quantity != $order_details['total']) {
             $gap = $order_details['total'] - $table_quantity;
             $out_str .= "<p style='color:red;font-weight:bold'>פער של ".$gap." במספר הכרטיסים</p>";
@@ -149,6 +158,17 @@ class Adamamed_Mailist_Page {
                 return $index;
         }
         return -1;
+    }
+
+    protected function findInArrayDup($hay, $needle) {
+        $result = array();
+        for($index = 0; $index < sizeof($hay); $index++) {
+            if ($hay[$index] == $needle)
+                array_push($result,$index);
+        }
+        if (sizeof($result) == 0)
+        array_push($result,-1);
+        return $result;
     }
 
     protected function findInManualOrders($hay, $needle) {
@@ -171,7 +191,6 @@ class Adamamed_Mailist_Page {
         );
         $results = wc_get_orders($args);
         $numOrders = sizeof($results);
-
         $resultEmails = array();
         $resultPhone = array();
         $resultQuantity = array();
@@ -181,20 +200,33 @@ class Adamamed_Mailist_Page {
         $total = 0;
         for ($index = 0 ; $index < $numOrders; $index++) {
             $order = new WC_Order($results[$index]);
-            array_push($resultOrderId, $order->get_id());
-            array_push($resultEmails, $order->get_billing_email());
-            array_push($resultPhone, $this->fixPhoneNumber($order->get_billing_phone()));
             $paid = $order->get_date_paid() ? gmdate( 'd/m/Y בשעה H:i', $order->get_date_paid()->getOffsetTimestamp() ) : '';
-            array_push($resultPaid, $paid);
             $items = $order->get_items(); 
             foreach ($items as $key => $product ) {
                 $order_item = new WC_Order_Item_Product($key);                    
                 $quantity =  $order_item->get_quantity();
                 $total += $quantity;
+
+                array_push($resultOrderId, $order->get_id());
+                array_push($resultEmails, $order->get_billing_email());
+                array_push($resultPhone, $this->fixPhoneNumber($order->get_billing_phone()));
+                array_push($resultPaid, $paid);
                 array_push($resultQuantity, $quantity);
                 array_push($resultProduct, $product->get_name());
             }
         }        
+
+        /*print_r($resultEmails);
+        echo "<br><br>";
+        print_r($resultQuantity);
+        echo "<br><br>";*/
+        /*print_r($resultProduct);
+        echo "<br><br>";
+        print_r($resultOrderId);
+        echo "<br><br>";
+        print_r($resultPaid);
+        echo "<br><br>";
+        print_r($resultPhone);*/
         return array('email'=>$resultEmails, 'quantity'=>$resultQuantity, 'product'=>$resultProduct, 'order_id'=> $resultOrderId, 
                     'date_paid'=>$resultPaid, 'phone'=>$resultPhone, 'total'=>$total);
     }
